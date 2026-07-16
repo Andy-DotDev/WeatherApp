@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Search from "./Search";
+import Location from "./Location";
 
 const Weather = () => {
   const api = {
@@ -6,12 +8,12 @@ const Weather = () => {
     base: "https://api.openweathermap.org/data/2.5/",
   };
 
-  const [query, setQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [weather, setWeather] = useState({});
-  const search = (evt) => {
+  const searchCity = (evt) => {
     if (evt.key === "Enter") {
       fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=1&appid=${api.key}`,
+        `https://api.openweathermap.org/geo/1.0/direct?q=${searchQuery}&limit=1&appid=${api.key}`,
       )
         .then((res) => res.json())
         .then((geoData) => {
@@ -29,7 +31,7 @@ const Weather = () => {
             .then((result) => {
               if (result.cod === 200) {
                 setWeather(result);
-                setQuery("");
+                setSearchQuery("");
               } else {
                 alert("Ошибка! Попробуйте снова");
               }
@@ -63,12 +65,7 @@ const Weather = () => {
       "Суббота",
       "Воскресенье",
     ];
-    let day = days[d.getDay()];
-    let date = d.getDate();
-    let month = months[d.getMonth()];
-    let year = d.getFullYear();
-
-    return `${day} ${date} ${month} ${year}`;
+    return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
   };
 
   return (
@@ -82,32 +79,12 @@ const Weather = () => {
       }
     >
       <main>
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="Город"
-            onChange={(e) => setQuery(e.target.value)}
-            value={query}
-            onKeyPress={search}
-            className="search-bar"
-          />
-        </div>
-        {typeof weather.main != "undefined" ? (
-          <div>
-            <div className="location-box">
-              <div className="location">
-                {weather.name}, {weather.sys.country}
-              </div>
-              <div className="date">{dateBuilder(new Date())}</div>
-            </div>
-            <div className="weather-box">
-              <div className="temp">{Math.round(weather.main.temp)}°c</div>
-              <div className="weather">{weather.weather[0].main}</div>
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
+        <Search
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          searchCity={searchCity}
+        />
+        <Location weather={weather} dateBuilder={dateBuilder} />
       </main>
     </div>
   );
