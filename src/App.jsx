@@ -1,5 +1,8 @@
+import "./index.css";
+import Weather from "./components/Weather";
+
 const App = () => {
-  return <h1>Hello world!</h1>;
+  return <Weather />;
 };
 
 export default App;
